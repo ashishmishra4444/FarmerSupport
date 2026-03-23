@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../services/api";
+import { authApi, setAuthToken } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -29,6 +29,7 @@ export const Login = () => {
     try {
       setSubmitting(true);
       const response = await authApi.login(form);
+      setAuthToken(response.token);
       setUser(response.data);
       toast.success(`${response.data.role} login successful. Welcome back, ${response.data.name}.`);
       navigate(response.data.role === "Admin" ? "/admin" : response.data.role === "Farmer" ? "/farmer" : "/buyer");
@@ -77,3 +78,7 @@ export const Login = () => {
     </motion.section>
   );
 };
+
+
+
+

@@ -1,5 +1,16 @@
 import axios from "axios";
 
+const AUTH_TOKEN_KEY = "farmer-support-token";
+
+export const getAuthToken = () => localStorage.getItem(AUTH_TOKEN_KEY);
+export const setAuthToken = (token) => {
+  if (token) {
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+  } else {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+  }
+};
+
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
 const normalizedApiBaseUrl = configuredApiUrl
   ? `${configuredApiUrl.replace(/\/$/, "")}/api`
@@ -8,6 +19,17 @@ const normalizedApiBaseUrl = configuredApiUrl
 const api = axios.create({
   baseURL: normalizedApiBaseUrl,
   withCredentials: true
+});
+
+api.interceptors.request.use((config) => {
+  const token = getAuthToken();
+
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
 });
 
 const unwrap = (response) => response.data;
