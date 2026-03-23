@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+const normalizedApiBaseUrl = configuredApiUrl
+  ? `${configuredApiUrl.replace(/\/$/, "")}/api`
+  : "/api";
+
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: normalizedApiBaseUrl,
   withCredentials: true
 });
 
@@ -62,4 +67,3 @@ export const chatApi = {
 };
 
 export default api;
-
