@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# builds
+client/dist/
+dist/
+.vercel/
+
+# environment files
+.env
+.env.*
+!.env.example
+client/.env
+client/.env.*
+server/.env
+server/.env.*
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
