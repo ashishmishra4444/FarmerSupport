@@ -18,7 +18,7 @@ const demoProfiles = {
 const copy = {
   en: {
     revenue: "Total Revenue",
-    pending: "Pending Orders",
+    pending: "Pending Approvals",
     lowStock: "Low Stock Alerts",
     delivered: "Delivered Orders",
     aiTitle: "AI Crop Recommendation",
@@ -51,15 +51,15 @@ const copy = {
     productSaved: "Product saved successfully.",
     statusSaved: "Order status updated successfully.",
     paid: "Paid",
-    pendingLabel: "Pending",
+    pendingLabel: "Pending approval",
     rejected: "Rejected",
     accept: "Accept",
     reject: "Reject",
     ship: "Ship",
     deliver: "Deliver",
-    statusHelp: "Pending means the buyer requested items. You should accept only if the required quantity is still available in stock.",
+    statusHelp: "Approve or reject the buyer request first. Payment starts only after you accept the order.",
     demoFlow: "Suggested farmer demo flow",
-    demoFlowText: "Stock will now decrease only after you accept an order. If a buyer requests more than available stock, reject that order.",
+    demoFlowText: "Accept only when stock is available. Once accepted, the buyer gets Pay Now. Shipping is unlocked only after payment.",
     recommendationError: "Please enter all soil values before requesting a recommendation.",
     cannotAccept: "Insufficient stock",
     openRequest: "Open request",
@@ -166,7 +166,7 @@ const copy = {
 };
 
 const statusTone = {
-  Pending: "border-amber-200 bg-amber-50",
+  PendingApproval: "border-amber-200 bg-amber-50",
   Accepted: "border-sky-200 bg-sky-50",
   Shipped: "border-indigo-200 bg-indigo-50",
   Delivered: "border-emerald-200 bg-emerald-50",
@@ -174,13 +174,13 @@ const statusTone = {
 };
 
 const statusLabel = (status, text) => {
-  if (status === "Pending") return text.pendingLabel;
+  if (status === "PendingApproval") return text.pendingLabel;
   if (status === "Rejected") return text.rejected;
   return status;
 };
 
 const workflowStatusPriority = {
-  Pending: 0,
+  PendingApproval: 0,
   Accepted: 1,
   Shipped: 2,
   Delivered: 3,
@@ -421,7 +421,7 @@ export const FarmerDashboardView = () => {
                             <p key={item.productName}>{item.productName} x{item.quantity} • {text.available}: {item.product?.stock ?? 0}</p>
                           ))}
                         </div>
-                        <p className="mt-3 text-sm text-slate-500">Rs {order.totalAmount} • {order.paymentStatus === "Paid" ? text.paid : text.pendingLabel}</p>
+                        <p className="mt-3 text-sm text-slate-500">Rs {order.totalAmount} • {order.paymentStatus === "Paid" ? text.paid : order.paymentStatus === "AwaitingPayment" ? "Awaiting payment" : "Unpaid"}</p>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
                         <Link to={buildBuyerOrderPath(order)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-emerald-200 hover:text-emerald-700">
@@ -442,6 +442,9 @@ export const FarmerDashboardView = () => {
     </div>
   );
 };
+
+
+
 
 
 

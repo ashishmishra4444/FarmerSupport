@@ -79,7 +79,8 @@ export const recommendationApi = {
 
 export const paymentApi = {
   createOrder: (orderId) => api.post(`/payments/${orderId}/create-order`).then(unwrap),
-  verify: (orderId, payload) => api.post(`/payments/${orderId}/verify`, payload).then(unwrap)
+  verify: (orderId, payload) => api.post(`/payments/${orderId}/verify`, payload).then(unwrap),
+  invoice: (orderId) => api.get(`/payments/${orderId}/invoice`).then(unwrap)
 };
 
 export const chatApi = {

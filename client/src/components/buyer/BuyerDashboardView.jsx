@@ -7,6 +7,7 @@ import { useWeather } from "../../hooks/useWeather";
 import { useMandi } from "../../hooks/useMandi";
 import { useTranslation } from "react-i18next";
 import { useToast } from "../../context/ToastContext";
+import { BuyerPaymentActions } from "../payment/BuyerPaymentActions";
 
 const copy = {
   en: {
@@ -23,93 +24,28 @@ const copy = {
     pickFarmerHelp: "No farmer is selected yet. Start from the farmer list above to see products and stock.",
     noFarmerProducts: "This farmer has no active products right now.",
     quantity: "Qty",
-    buy: "Buy",
+    buy: "Request Order",
     weather: "Weather Alerts",
     mandi: "Live Mandi Ticker",
     myOrders: "My Orders",
     noProducts: "No products are available yet. First add products from a farmer account.",
-    noOrders: "No buyer orders yet. Once you buy from the marketplace, your orders will appear here.",
-    demoTip: "Buyer flow: choose quantity, click Buy, and the same pending order will update instead of creating duplicates.",
+    noOrders: "No buyer orders yet. Once you request crops from the marketplace, your orders will appear here.",
+    demoTip: "Buyer flow: send a request first, wait for the farmer to accept it, then complete payment.",
     items: "items",
     farmer: "Farmer",
     paid: "Paid",
-    pending: "Pending",
-    delivery: "Delivery",
-    statusHint: "Pending means the farmer has not accepted or shipped the order yet.",
+    accepted: "Accepted",
+    awaitingPayment: "Awaiting payment",
+    rejected: "Rejected",
+    pending: "Pending approval",
+    unpaid: "Unpaid",
+    statusHint: "Orders move through approval first. You can pay only after the farmer accepts your request.",
     locationFallback: "Location is blocked, so weather is shown for a default Odisha location.",
     invalidQuantity: "Enter a valid quantity within available stock.",
     exceedsStock: "Only {{available}} of {{product}} available in stock. Please enter a lower quantity.",
     liveSource: "Auto-refreshing live data",
     total: "Total",
     orderItems: "Order items"
-  },
-  hi: {
-    marketplace: "मार्केटप्लेस",
-    filterReady: "किसानों की लाइव फसल सूची",
-    farmersTitle: "किसान",
-    farmersSubtitle: "उपलब्ध स्टॉक देखने के लिए किसान चुनें",
-    available: "उपलब्ध",
-    inStock: "स्टॉक में",
-    farmersCount: "किसान उपलब्ध",
-    productsCount: "उत्पाद सूचीबद्ध",
-    selectFarmer: "किसान चुनें",
-    pickFarmerPrompt: "मार्केटप्लेस सूची खोलने के लिए किसान चुनें।",
-    pickFarmerHelp: "अभी कोई किसान चयनित नहीं है। उत्पाद और स्टॉक देखने के लिए ऊपर से किसान चुनें।",
-    noFarmerProducts: "इस किसान के पास अभी कोई सक्रिय उत्पाद नहीं है।",
-    quantity: "मात्रा",
-    buy: "खरीदें",
-    weather: "मौसम अलर्ट",
-    mandi: "लाइव मंडी टिकर",
-    myOrders: "मेरे ऑर्डर",
-    noProducts: "अभी कोई उत्पाद उपलब्ध नहीं है। पहले किसान खाते से उत्पाद जोड़ें।",
-    noOrders: "अभी कोई खरीदार ऑर्डर नहीं। खरीदारी करने के बाद आपके ऑर्डर यहाँ दिखेंगे।",
-    demoTip: "खरीदार फ्लो: मात्रा चुनें, Buy दबाएँ, और वही लंबित ऑर्डर अपडेट होगा।",
-    items: "आइटम",
-    farmer: "किसान",
-    paid: "भुगतान हो चुका",
-    pending: "लंबित",
-    delivery: "डिलीवरी",
-    statusHint: "Pending का अर्थ है कि किसान ने अभी ऑर्डर स्वीकार या शिप नहीं किया है।",
-    locationFallback: "लोकेशन ब्लॉक है, इसलिए मौसम डिफॉल्ट ओडिशा लोकेशन से दिखाया जा रहा है।",
-    invalidQuantity: "उपलब्ध स्टॉक के भीतर सही मात्रा दर्ज करें।",
-    exceedsStock: "{{product}} का केवल {{available}} स्टॉक में उपलब्ध है। कृपया कम मात्रा दर्ज करें।",
-    liveSource: "ऑटो-रिफ्रेश लाइव डेटा",
-    total: "कुल",
-    orderItems: "ऑर्डर आइटम"
-  },
-  od: {
-    marketplace: "ମାର୍କେଟପ୍ଲେସ",
-    filterReady: "କୃଷକଙ୍କ ଲାଇଭ ଫସଲ ତାଲିକା",
-    farmersTitle: "କୃଷକ",
-    farmersSubtitle: "ଉପଲବ୍ଧ ଷ୍ଟକ ଦେଖିବା ପାଇଁ କୃଷକ ବାଛନ୍ତୁ",
-    available: "ଉପଲବ୍ଧ",
-    inStock: "ଷ୍ଟକରେ",
-    farmersCount: "କୃଷକ ଉପଲବ୍ଧ",
-    productsCount: "ପ୍ରଡକ୍ଟ ତାଲିକାଭୁକ୍ତ",
-    selectFarmer: "କୃଷକ ବାଛନ୍ତୁ",
-    pickFarmerPrompt: "ମାର୍କେଟପ୍ଲେସ ତାଲିକା ଖୋଲିବା ପାଇଁ କୃଷକ ବାଛନ୍ତୁ।",
-    pickFarmerHelp: "ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି କୃଷକ ବାଛାଯାଇନାହିଁ। ପ୍ରଡକ୍ଟ ଏବଂ ଷ୍ଟକ ଦେଖିବା ପାଇଁ ଉପରୁ କୃଷକ ବାଛନ୍ତୁ।",
-    noFarmerProducts: "ଏହି କୃଷକଙ୍କ ପାଖରେ ଏବେ କୌଣସି ସକ୍ରିୟ ପ୍ରଡକ୍ଟ ନାହିଁ।",
-    quantity: "ପରିମାଣ",
-    buy: "କିଣନ୍ତୁ",
-    weather: "ପାଣିପାଗ ସତର୍କତା",
-    mandi: "ଲାଇଭ ମଣ୍ଡି ଟିକର",
-    myOrders: "ମୋ ଅର୍ଡରଗୁଡିକ",
-    noProducts: "ଏଯାବତ୍ କୌଣସି ପ୍ରଡକ୍ଟ ଉପଲବ୍ଧ ନାହିଁ। ପ୍ରଥମେ କୃଷକ ଖାତାରୁ ପ୍ରଡକ୍ଟ ଯୋଡନ୍ତୁ।",
-    noOrders: "ଏଯାବତ୍ କୌଣସି କ୍ରେତା ଅର୍ଡର ନାହିଁ। କିଣିବା ପରେ ଏଠାରେ ଦେଖାଯିବ।",
-    demoTip: "କ୍ରେତା ଫ୍ଲୋ: ପରିମାଣ ବାଛନ୍ତୁ, Buy ଦବାନ୍ତୁ, ସେହି ଅପେକ୍ଷାରତ ଅର୍ଡର ଅପଡେଟ୍ ହେବ।",
-    items: "ଆଇଟମ୍",
-    farmer: "କୃଷକ",
-    paid: "ଭୁଗତାନ ହୋଇଛି",
-    pending: "ଅପେକ୍ଷାରତ",
-    delivery: "ଡେଲିଭରି",
-    statusHint: "Pending ଅର୍ଥ କୃଷକ ଏପର୍ଯ୍ୟନ୍ତ ଅର୍ଡର ଗ୍ରହଣ କିମ୍ବା ଶିପ୍ କରିନାହାନ୍ତି।",
-    locationFallback: "ଲୋକେସନ ବ୍ଲକ୍ ହୋଇଥିବାରୁ ଡିଫଲ୍ଟ ଓଡିଶା ଲୋକେସନର ପାଣିପାଗ ଦେଖାଯାଉଛି।",
-    invalidQuantity: "ଉପଲବ୍ଧ ଷ୍ଟକ ମଧ୍ୟରେ ଠିକ୍ ପରିମାଣ ଦିଅନ୍ତୁ।",
-    exceedsStock: "{{product}} ର କେବଳ {{available}} ଷ୍ଟକରେ ଉପଲବ୍ଧ ଅଛି। ଦୟାକରି କମ୍ ପରିମାଣ ଦିଅନ୍ତୁ।",
-    liveSource: "ଅଟୋ-ରିଫ୍ରେସ ଲାଇଭ ଡାଟା",
-    total: "ମୋଟ",
-    orderItems: "ଅର୍ଡର ଆଇଟମ୍"
   }
 };
 
@@ -120,8 +56,12 @@ const compactQuantity = (quantity, unit = "") => {
 };
 
 const translateStatus = (status, text) => {
-  if (status === "Pending") return text.pending;
+  if (status === "PendingApproval") return text.pending;
+  if (status === "Accepted") return text.accepted;
+  if (status === "AwaitingPayment") return text.awaitingPayment;
   if (status === "Paid") return text.paid;
+  if (status === "Rejected") return text.rejected;
+  if (status === "Unpaid") return text.unpaid;
   return status;
 };
 
@@ -167,7 +107,7 @@ export const BuyerDashboardView = () => {
         deliveryCharge: 0,
         shippingAddress: {
           fullName: "Buyer User",
-          phone: "9999999999",
+          phone: "9123456789",
           addressLine1: "Village Road",
           district: district || "Khordha",
           state: state || "Odisha",
@@ -176,7 +116,7 @@ export const BuyerDashboardView = () => {
       }),
     onSuccess: (_response, variables) => {
       setQuantities((current) => ({ ...current, [variables.productId]: "1" }));
-      toast.success(`${compactQuantity(variables.quantity, variables.unit)} of ${variables.productName} added to your order list.`);
+      toast.success(`${compactQuantity(variables.quantity, variables.unit)} of ${variables.productName} sent to the farmer for approval.`);
       queryClient.invalidateQueries({ queryKey: ["buyer-orders"] });
       queryClient.invalidateQueries({ queryKey: ["marketplace-products"] });
     },
@@ -275,38 +215,30 @@ export const BuyerDashboardView = () => {
               </span>
             </div>
             <div className="space-y-3 max-h-[18rem] overflow-y-auto pr-1">
-              {farmers.length ? (
-                farmers.map((farmer) => {
-                  const isActive = farmer.id === selectedFarmerId;
-                  const locationText = [farmer.location?.district, farmer.location?.state].filter(Boolean).join(", ");
+              {farmers.length ? farmers.map((farmer) => {
+                const isActive = farmer.id === selectedFarmerId;
+                const locationText = [farmer.location?.district, farmer.location?.state].filter(Boolean).join(", ");
 
-                  return (
-                    <button
-                      key={farmer.id}
-                      type="button"
-                      onClick={() => setSelectedFarmerId(farmer.id)}
-                      className={`w-full rounded-2xl border p-4 text-left transition ${
-                        isActive
-                          ? "border-emerald-300 bg-emerald-50 shadow-sm"
-                          : "border-slate-100 hover:border-emerald-200 hover:bg-slate-50"
-                      }`}
-                    >
-                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                        <div>
-                          <p className="font-semibold">{farmer.name}</p>
-                          <p className="text-sm text-slate-500">{locationText || text.selectFarmer}</p>
-                        </div>
-                        <div className="flex flex-wrap gap-2 text-xs">
-                          <span className="rounded-full bg-white px-3 py-1 text-slate-600">{farmer.productCount} {text.productsCount}</span>
-                          <span className="rounded-full bg-white px-3 py-1 text-emerald-700">{farmer.totalStock} {text.inStock}</span>
-                        </div>
+                return (
+                  <button
+                    key={farmer.id}
+                    type="button"
+                    onClick={() => setSelectedFarmerId(farmer.id)}
+                    className={`w-full rounded-2xl border p-4 text-left transition ${isActive ? "border-emerald-300 bg-emerald-50 shadow-sm" : "border-slate-100 hover:border-emerald-200 hover:bg-slate-50"}`}
+                  >
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <div>
+                        <p className="font-semibold">{farmer.name}</p>
+                        <p className="text-sm text-slate-500">{locationText || text.selectFarmer}</p>
                       </div>
-                    </button>
-                  );
-                })
-              ) : (
-                <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">{text.noProducts}</div>
-              )}
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        <span className="rounded-full bg-white px-3 py-1 text-slate-600">{farmer.productCount} {text.productsCount}</span>
+                        <span className="rounded-full bg-white px-3 py-1 text-emerald-700">{farmer.totalStock} {text.inStock}</span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              }) : <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">{text.noProducts}</div>}
             </div>
           </div>
 
@@ -316,11 +248,7 @@ export const BuyerDashboardView = () => {
                 <h2 className="text-lg font-semibold">{text.marketplace}</h2>
                 <span className="text-sm text-slate-500">{text.filterReady}</span>
               </div>
-              {activeFarmer ? (
-                <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
-                  {activeFarmer.name}
-                </span>
-              ) : null}
+              {activeFarmer ? <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">{activeFarmer.name}</span> : null}
             </div>
             {!activeFarmer ? (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
@@ -329,78 +257,60 @@ export const BuyerDashboardView = () => {
               </div>
             ) : (
               <div className="max-h-[32rem] space-y-3 overflow-y-auto pr-1">
-                {activeFarmer.products.length ? (
-                  activeFarmer.products.map((product) => {
-                    const quantity = quantities[product._id] ?? "1";
-                    const locationText = [product.location?.district, product.location?.state].filter(Boolean).join(", ");
+                {activeFarmer.products.length ? activeFarmer.products.map((product) => {
+                  const quantity = quantities[product._id] ?? "1";
+                  const locationText = [product.location?.district, product.location?.state].filter(Boolean).join(", ");
 
-                    return (
-                      <div key={product._id} className="rounded-[1.7rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.05)]">
-                        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                          <div>
-                            <p className="font-semibold text-slate-900">{product.name}</p>
-                            <p className="text-sm text-slate-500">{product.cropType}{locationText ? ` • ${locationText}` : ""}</p>
-                            <p className="mt-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-                              {text.available}: {product.stock} {product.unit || text.items}
-                            </p>
-                          </div>
-                          <div className="flex flex-wrap items-center gap-3">
-                            <p className="font-semibold text-emerald-700">Rs {product.price}</p>
-                            <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
-                              <span className="text-xs text-slate-500">{text.quantity}</span>
-                              <button
-                                type="button"
-                                onClick={() => updateQuantity(product._id, Number(quantity || 1) - 1, product.stock, true)}
-                                className="rounded-full px-2 text-slate-600 hover:bg-slate-100"
-                              >
-                                -
-                              </button>
-                              <input
-                                type="number"
-                                min="1"
-                                max={product.stock}
-                                value={quantity}
-                                onFocus={(event) => event.target.select()}
-                                onChange={(event) => {
-                                  const nextValue = event.target.value;
-                                  if (nextValue === "") {
-                                    setQuantities((current) => ({ ...current, [product._id]: "" }));
-                                    return;
-                                  }
+                  return (
+                    <div key={product._id} className="rounded-[1.7rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.05)]">
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-900">{product.name}</p>
+                          <p className="text-sm text-slate-500">{product.cropType}{locationText ? ` • ${locationText}` : ""}</p>
+                          <p className="mt-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+                            {text.available}: {product.stock} {product.unit || text.items}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <p className="font-semibold text-emerald-700">Rs {product.price}</p>
+                          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+                            <span className="text-xs text-slate-500">{text.quantity}</span>
+                            <button type="button" onClick={() => updateQuantity(product._id, Number(quantity || 1) - 1, product.stock, true)} className="rounded-full px-2 text-slate-600 hover:bg-slate-100">-</button>
+                            <input
+                              type="number"
+                              min="1"
+                              max={product.stock}
+                              value={quantity}
+                              onFocus={(event) => event.target.select()}
+                              onChange={(event) => {
+                                const nextValue = event.target.value;
+                                if (nextValue === "") {
+                                  setQuantities((current) => ({ ...current, [product._id]: "" }));
+                                  return;
+                                }
 
-                                  if (/^\d+$/.test(nextValue)) {
-                                    setQuantities((current) => ({ ...current, [product._id]: nextValue }));
-                                  }
-                                }}
-                                onBlur={() => updateQuantity(product._id, quantity || "1", product.stock)}
-                                className="w-16 border-0 bg-transparent text-center text-sm font-semibold outline-none"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => updateQuantity(product._id, Number(quantity || 1) + 1, product.stock, true)}
-                                className="rounded-full px-2 text-slate-600 hover:bg-slate-100"
-                              >
-                                +
-                              </button>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => submitOrder(product)}
-                              disabled={createOrder.isPending || product.stock < 1}
-                              className="rounded-full bg-emerald-600 px-4 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                              {text.buy}
-                            </button>
+                                if (/^\d+$/.test(nextValue)) {
+                                  setQuantities((current) => ({ ...current, [product._id]: nextValue }));
+                                }
+                              }}
+                              onBlur={() => updateQuantity(product._id, quantity || "1", product.stock)}
+                              className="w-16 border-0 bg-transparent text-center text-sm font-semibold outline-none"
+                            />
+                            <button type="button" onClick={() => updateQuantity(product._id, Number(quantity || 1) + 1, product.stock, true)} className="rounded-full px-2 text-slate-600 hover:bg-slate-100">+</button>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => submitOrder(product)}
+                            disabled={createOrder.isPending || product.stock < 1}
+                            className="rounded-full bg-emerald-600 px-4 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {text.buy}
+                          </button>
                         </div>
                       </div>
-                    );
-                  })
-                ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
-                    {text.noFarmerProducts}
-                  </div>
-                )}
+                    </div>
+                  );
+                }) : <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">{text.noFarmerProducts}</div>}
               </div>
             )}
           </div>
@@ -458,30 +368,29 @@ export const BuyerDashboardView = () => {
         </div>
         <p className="mb-4 text-sm text-slate-500">{text.statusHint}</p>
         <div className="space-y-3 max-h-[28rem] overflow-y-auto pr-1">
-          {latestOrders.length ? (
-            latestOrders.map((order) => (
-              <div key={order._id} className="rounded-[1.7rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.05)]">
-                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <p className="font-semibold">{order.farmer?.name || text.farmer}</p>
-                    <p className="mt-1 text-sm text-slate-500">{text.orderItems}: {order.items.map((item) => `${item.productName} x${item.quantity}`).join(", ")}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold">{text.total}: Rs {order.totalAmount}</p>
-                    <p className="mt-1 text-sm text-slate-500">{translateStatus(order.status, text)} • {translateStatus(order.paymentStatus, text)}</p>
-                  </div>
+          {latestOrders.length ? latestOrders.map((order) => (
+            <div key={order._id} className="rounded-[1.7rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.05)]">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="font-semibold">{order.farmer?.name || text.farmer}</p>
+                  <p className="mt-1 text-sm text-slate-500">{text.orderItems}: {order.items.map((item) => `${item.productName} x${item.quantity}`).join(", ")}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold">{text.total}: Rs {order.totalAmount}</p>
+                  <p className="mt-1 text-sm text-slate-500">{translateStatus(order.status, text)} • {translateStatus(order.paymentStatus, text)}</p>
+                  <BuyerPaymentActions
+                    order={order}
+                    onPaid={() => {
+                      queryClient.invalidateQueries({ queryKey: ["buyer-orders"] });
+                      queryClient.invalidateQueries({ queryKey: ["marketplace-products"] });
+                    }}
+                  />
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">{text.noOrders}</div>
-          )}
+            </div>
+          )) : <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">{text.noOrders}</div>}
         </div>
       </section>
     </div>
   );
 };
-
-
-
-

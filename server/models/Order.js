@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ORDER_STATUSES } from "../utils/orderWorkflow.js";
+import { ORDER_PAYMENT_STATUSES, ORDER_STATUSES } from "../utils/orderWorkflow.js";
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -53,12 +53,12 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ORDER_STATUSES,
-      default: "Pending"
+      default: "PendingApproval"
     },
     paymentStatus: {
       type: String,
-      enum: ["Pending", "Paid", "Failed", "Refunded"],
-      default: "Pending"
+      enum: ORDER_PAYMENT_STATUSES,
+      default: "Unpaid"
     },
     subtotal: {
       type: Number,

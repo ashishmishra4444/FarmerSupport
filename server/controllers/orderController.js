@@ -49,7 +49,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     let existingOrder = await Order.findOne({
       buyer: req.user._id,
       farmer: farmerId,
-      status: "Pending"
+      status: "PendingApproval"
     }).session(session);
 
     const hadExistingOrder = Boolean(existingOrder);
@@ -59,8 +59,8 @@ export const createOrder = asyncHandler(async (req, res) => {
         buyer: req.user._id,
         farmer: farmerId,
         items: [],
-        status: "Pending",
-        paymentStatus: "Pending",
+        status: "PendingApproval",
+        paymentStatus: "Unpaid",
         subtotal: 0,
         deliveryCharge: Number(deliveryCharge) || 0,
         totalAmount: 0,
@@ -80,22 +80,11 @@ export const createOrder = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Quantity must be at least 1");
       }
 
-      const existingItem = existingOrder.items.find(
-        (item) => String(item.product) === String(product._id)
-      );
-
+      const existingItem = existingOrder.items.find((item) => String(item.product) === String(product._id));
       const nextQuantity = (existingItem?.quantity || 0) + requestedItem.quantity;
-      const remainingStock = product.stock - (existingItem?.quantity || 0);
 
       if (nextQuantity > product.stock) {
-        if (remainingStock <= 0) {
-          throw new ApiError(400, `No more ${product.name} left right now.`);
-        }
-
-        throw new ApiError(
-          400,
-          `Only ${remainingStock}${product.unit || " units"} of ${product.name} left right now.`
-        );
+        throw new ApiError(400, `Only ${product.stock}${product.unit || " units"} of ${product.name} available right now.`);
       }
 
       if (existingItem) {
@@ -128,7 +117,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: hadExistingOrder ? "Order quantity updated successfully" : "Order placed successfully",
+      message: hadExistingOrder ? "Order request updated successfully" : "Order request sent to farmer successfully",
       data: existingOrder
     });
   } catch (error) {
@@ -225,11 +214,19 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
         await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } }, { session });
       }
 
-      order.paymentStatus = "Paid";
+      order.paymentStatus = "AwaitingPayment";
     }
 
     if (status === "Rejected") {
-      order.paymentStatus = "Failed";
+      if (order.paymentStatus === "Paid") {
+        throw new ApiError(400, "Paid orders cannot be rejected. Refund flow is not enabled.");
+      }
+
+      order.paymentStatus = "Unpaid";
+    }
+
+    if (status === "Shipped" && order.paymentStatus !== "Paid") {
+      throw new ApiError(400, "Buyer payment is required before shipping the order.");
     }
 
     order.status = status;
@@ -258,7 +255,7 @@ export const getFarmerOrderAnalytics = asyncHandler(async (req, res) => {
         totalRevenue: {
           $sum: { $cond: [{ $eq: ["$paymentStatus", "Paid"] }, "$totalAmount", 0] }
         },
-        pendingOrders: { $sum: { $cond: [{ $eq: ["$status", "Pending"] }, 1, 0] } },
+        pendingOrders: { $sum: { $cond: [{ $eq: ["$status", "PendingApproval"] }, 1, 0] } },
         shippedOrders: { $sum: { $cond: [{ $eq: ["$status", "Shipped"] }, 1, 0] } },
         deliveredOrders: { $sum: { $cond: [{ $eq: ["$status", "Delivered"] }, 1, 0] } },
         totalOrders: { $sum: 1 }

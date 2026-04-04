@@ -115,7 +115,7 @@ export const getFarmerDashboardSummary = asyncHandler(async (req, res) => {
   const [productCount, lowStockCount, pendingOrders, deliveredRevenue] = await Promise.all([
     Product.countDocuments({ farmer: req.user._id }),
     Product.countDocuments({ farmer: req.user._id, stock: { $lte: 10 } }),
-    Order.countDocuments({ farmer: req.user._id, status: "Pending" }),
+    Order.countDocuments({ farmer: req.user._id, status: "PendingApproval" }),
     Order.aggregate([
       { $match: { farmer: req.user._id, paymentStatus: "Paid" } },
       { $group: { _id: null, totalRevenue: { $sum: "$totalAmount" } } }
