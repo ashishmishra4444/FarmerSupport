@@ -118,6 +118,23 @@ export const verifyRazorpayPayment = asyncHandler(async (req, res) => {
   const order = await getAccessibleOrder(req.params.orderId, req.user);
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
+  if (order.paymentStatus === "Paid") {
+    const existingPayment = await Payment.findOne({ order: order._id, status: "paid" }).sort({
+      paidAt: -1,
+      createdAt: -1
+    });
+
+    if (!existingPayment) {
+      throw new ApiError(404, "Paid order is missing its payment record");
+    }
+
+    return res.json({
+      success: true,
+      message: "Payment already verified",
+      data: buildInvoiceData(order, existingPayment)
+    });
+  }
+
   if (order.status !== "Accepted" || order.paymentStatus !== "AwaitingPayment") {
     throw new ApiError(400, "This order is not currently awaiting payment.");
   }
@@ -214,3 +231,4 @@ export const handleRazorpayWebhook = asyncHandler(async (req, res) => {
 
   res.json({ success: true, message: "Webhook processed successfully" });
 });
+
