@@ -80,7 +80,16 @@ export const BuyerPaymentActions = ({ order, onPaid }) => {
             onPaid?.();
             navigate(`/buyer/orders/${order._id}/invoice`);
           } catch (error) {
-            toast.error(error.response?.data?.message || "Payment verification failed.");
+            const verifyMessage = error.response?.data?.message || "Payment verification failed.";
+
+            try {
+              await paymentApi.invoice(order._id);
+              toast.success("Payment successful. Invoice is ready.");
+              onPaid?.();
+              navigate(`/buyer/orders/${order._id}/invoice`);
+            } catch (_invoiceError) {
+              toast.error(verifyMessage);
+            }
           } finally {
             setLoading(false);
           }
@@ -128,3 +137,4 @@ export const BuyerPaymentActions = ({ order, onPaid }) => {
     </div>
   );
 };
+
