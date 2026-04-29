@@ -11,6 +11,7 @@ export const Register = () => {
   const { setUser } = useAuth();
   const { t } = useTranslation();
   const toast = useToast();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -18,9 +19,10 @@ export const Register = () => {
     role: "Farmer",
     location: {
       district: "",
-      state: ""
-    }
+      state: "",
+    },
   });
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,7 +30,13 @@ export const Register = () => {
     event.preventDefault();
     setError("");
 
-    if (!form.name || !form.email || !form.password || !form.location.district || !form.location.state) {
+    if (
+      !form.name ||
+      !form.email ||
+      !form.password ||
+      !form.location.district ||
+      !form.location.state
+    ) {
       const message = t("requiredFields");
       setError(message);
       toast.error(message);
@@ -37,13 +45,27 @@ export const Register = () => {
 
     try {
       setSubmitting(true);
+
       const response = await authApi.register(form);
+
       setAuthToken(response.token);
       setUser(response.data);
-      toast.success(`${response.data.role} account created successfully. Welcome, ${response.data.name}.`);
-      navigate(response.data.role === "Admin" ? "/admin" : response.data.role === "Farmer" ? "/farmer" : "/buyer");
+
+      toast.success(
+        `${response.data.role} account created successfully. Welcome, ${response.data.name}.`
+      );
+
+      navigate(
+        response.data.role === "Admin"
+          ? "/admin"
+          : response.data.role === "Farmer"
+          ? "/farmer"
+          : "/buyer"
+      );
     } catch (apiError) {
-      const message = apiError.response?.data?.message || t("registerError");
+      const message =
+        apiError.response?.data?.message || t("registerError");
+
       setError(message);
       toast.error(message);
     } finally {
@@ -52,79 +74,224 @@ export const Register = () => {
   };
 
   return (
-    <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
-      <div className="overflow-hidden rounded-[2rem] bg-[linear-gradient(180deg,#064e3b_0%,#065f46_45%,#0f766e_100%)] p-6 text-white shadow-xl sm:p-8 lg:p-10">
-        <div className="flex h-full flex-col justify-between gap-8">
-          <div>
-            <p className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-emerald-50">{t("registerBadge")}</p>
-            <h1 className="mt-6 text-3xl font-semibold sm:text-4xl">{t("registerHeroTitle")}</h1>
-            <p className="mt-4 max-w-xl text-sm leading-7 text-emerald-50/90 sm:text-base">{t("registerHeroText")}</p>
-          </div>
+    <motion.section
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45 }}
+      className="min-h-screen bg-[#f6f1e7] px-4 py-6 sm:px-6 lg:px-10"
+    >
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_1.05fr]">
+        {/* LEFT HERO PANEL */}
+        <div className="overflow-hidden rounded-[2rem] bg-[#123524] text-white shadow-xl">
+          <div className="flex h-full flex-col justify-between gap-8 p-6 sm:p-8 lg:p-10">
+            <div>
+              <p className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-[#efe7d0]">
+                Farmer Support Platform
+              </p>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            <div className="overflow-hidden rounded-[1.5rem] bg-white/10 backdrop-blur">
-              <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&w=900&q=80" alt="Farmer market" className="h-32 w-full object-cover" />
-              <div className="p-4">
-                <p className="text-sm text-emerald-100">{t("farmerRole")}</p>
-                <p className="mt-2 text-lg font-semibold">{t("farmerRoleText")}</p>
-              </div>
+              <h1 className="mt-6 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
+                Grow better with smarter farming tools.
+              </h1>
+
+              <p className="mt-5 max-w-xl text-sm leading-7 text-[#d7d3c8] sm:text-base">
+                Create your account to access mandi prices, weather alerts,
+                crop planning insights, secure buyers, and seamless farming
+                support.
+              </p>
             </div>
-            <div className="overflow-hidden rounded-[1.5rem] bg-white/10 backdrop-blur">
-              <img src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=900&q=80" alt="Buyer and produce" className="h-32 w-full object-cover" />
-              <div className="p-4">
-                <p className="text-sm text-emerald-100">{t("buyerRole")}</p>
-                <p className="mt-2 text-lg font-semibold">{t("buyerRoleText")}</p>
+
+            {/* Feature Cards */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#d7d3c8]">
+                  Daily Prices
+                </p>
+                <h3 className="mt-3 text-xl font-semibold text-[#f9f3df]">
+                  Live mandi insights
+                </h3>
+                <p className="mt-2 text-sm text-[#d7d3c8]">
+                  Compare markets and sell produce at better prices.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#d7d3c8]">
+                  Smart Alerts
+                </p>
+                <h3 className="mt-3 text-xl font-semibold text-[#f9f3df]">
+                  Weather readiness
+                </h3>
+                <p className="mt-2 text-sm text-[#d7d3c8]">
+                  Get local forecasts for sowing, harvest and transport.
+                </p>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-lg sm:p-8 lg:p-10">
-        <div className="max-w-2xl">
-          <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">{t("createAccount")}</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-500 sm:text-base">{t("registerIntro")}</p>
+        {/* RIGHT FORM PANEL */}
+        <div className="rounded-[2rem] border border-[#ddd2b6] bg-[#fcfaf4] p-6 shadow-xl sm:p-8 lg:p-10">
+          <div className="max-w-2xl">
+            <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#8a7d5a]">
+              Join Platform
+            </p>
+
+            <h2 className="mt-3 text-3xl font-semibold text-[#102a1d] sm:text-4xl">
+              {t("createAccount")}
+            </h2>
+
+            <p className="mt-3 text-sm leading-7 text-[#5f665b] sm:text-base">
+              Register as a farmer, buyer, or admin and start managing your
+              agricultural ecosystem with confidence.
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2"
+          >
+            {/* Name */}
+            <label className="grid gap-2">
+              <span className="text-sm font-medium text-[#1d2b1f]">
+                {t("fullName")}
+              </span>
+              <input
+                type="text"
+                placeholder={t("enterFullName")}
+                value={form.name}
+                onChange={(e) =>
+                  setForm({ ...form, name: e.target.value })
+                }
+                className="rounded-2xl border border-[#ddd2b6] bg-white px-4 py-3 outline-none transition focus:border-[#123524] focus:ring-2 focus:ring-[#ddd2b6]"
+              />
+            </label>
+
+            {/* Email */}
+            <label className="grid gap-2">
+              <span className="text-sm font-medium text-[#1d2b1f]">
+                {t("email")}
+              </span>
+              <input
+                type="email"
+                placeholder={t("enterEmail")}
+                value={form.email}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value })
+                }
+                className="rounded-2xl border border-[#ddd2b6] bg-white px-4 py-3 outline-none transition focus:border-[#123524] focus:ring-2 focus:ring-[#ddd2b6]"
+              />
+            </label>
+
+            {/* Password */}
+            <label className="grid gap-2">
+              <span className="text-sm font-medium text-[#1d2b1f]">
+                {t("password")}
+              </span>
+              <input
+                type="password"
+                placeholder={t("minPassword")}
+                value={form.password}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
+                className="rounded-2xl border border-[#ddd2b6] bg-white px-4 py-3 outline-none transition focus:border-[#123524] focus:ring-2 focus:ring-[#ddd2b6]"
+              />
+            </label>
+
+            {/* Role */}
+            <label className="grid gap-2">
+              <span className="text-sm font-medium text-[#1d2b1f]">
+                {t("role")}
+              </span>
+              <select
+                value={form.role}
+                onChange={(e) =>
+                  setForm({ ...form, role: e.target.value })
+                }
+                className="rounded-2xl border border-[#ddd2b6] bg-white px-4 py-3 outline-none transition focus:border-[#123524] focus:ring-2 focus:ring-[#ddd2b6]"
+              >
+                <option value="Farmer">{t("farmerRole")}</option>
+                <option value="Buyer">{t("buyerRole")}</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </label>
+
+            {/* District */}
+            <label className="grid gap-2">
+              <span className="text-sm font-medium text-[#1d2b1f]">
+                {t("district")}
+              </span>
+              <input
+                type="text"
+                placeholder={t("enterDistrict")}
+                value={form.location.district}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    location: {
+                      ...form.location,
+                      district: e.target.value,
+                    },
+                  })
+                }
+                className="rounded-2xl border border-[#ddd2b6] bg-white px-4 py-3 outline-none transition focus:border-[#123524] focus:ring-2 focus:ring-[#ddd2b6]"
+              />
+            </label>
+
+            {/* State */}
+            <label className="grid gap-2">
+              <span className="text-sm font-medium text-[#1d2b1f]">
+                {t("state")}
+              </span>
+              <input
+                type="text"
+                placeholder={t("enterState")}
+                value={form.location.state}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    location: {
+                      ...form.location,
+                      state: e.target.value,
+                    },
+                  })
+                }
+                className="rounded-2xl border border-[#ddd2b6] bg-white px-4 py-3 outline-none transition focus:border-[#123524] focus:ring-2 focus:ring-[#ddd2b6]"
+              />
+            </label>
+
+            {/* Error */}
+            {error && (
+              <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 md:col-span-2">
+                {error}
+              </p>
+            )}
+
+            {/* Button */}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-full bg-[#123524] px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#1d4d2b] disabled:cursor-not-allowed disabled:opacity-70 md:col-span-2"
+            >
+              {submitting
+                ? t("creatingAccount")
+                : t("createAccount")}
+            </button>
+
+            {/* Login */}
+            <p className="text-center text-sm text-[#5f665b] md:col-span-2">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="font-semibold text-[#123524] hover:underline"
+              >
+                Sign in
+              </button>
+            </p>
+          </form>
         </div>
-
-        <form className="mt-8 grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
-          <label className="grid gap-2 md:col-span-1">
-            <span className="text-sm font-medium text-slate-700">{t("fullName")}</span>
-            <input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-emerald-400" placeholder={t("enterFullName")} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          </label>
-          <label className="grid gap-2 md:col-span-1">
-            <span className="text-sm font-medium text-slate-700">{t("email")}</span>
-            <input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-emerald-400" type="email" placeholder={t("enterEmail")} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-          </label>
-          <label className="grid gap-2 md:col-span-1">
-            <span className="text-sm font-medium text-slate-700">{t("password")}</span>
-            <input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-emerald-400" type="password" placeholder={t("minPassword")} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-          </label>
-          <label className="grid gap-2 md:col-span-1">
-            <span className="text-sm font-medium text-slate-700">{t("role")}</span>
-            <select className="rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-emerald-400" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-              <option value="Farmer">{t("farmerRole")}</option>
-              <option value="Buyer">{t("buyerRole")}</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </label>
-          <label className="grid gap-2 md:col-span-1">
-            <span className="text-sm font-medium text-slate-700">{t("district")}</span>
-            <input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-emerald-400" placeholder={t("enterDistrict")} value={form.location.district} onChange={(e) => setForm({ ...form, location: { ...form.location, district: e.target.value } })} />
-          </label>
-          <label className="grid gap-2 md:col-span-1">
-            <span className="text-sm font-medium text-slate-700">{t("state")}</span>
-            <input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-emerald-400" placeholder={t("enterState")} value={form.location.state} onChange={(e) => setForm({ ...form, location: { ...form.location, state: e.target.value } })} />
-          </label>
-          {error ? <p className="md:col-span-2 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
-          <button type="submit" disabled={submitting} className="md:col-span-2 rounded-full bg-emerald-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70">
-            {submitting ? t("creatingAccount") : t("createAccount")}
-          </button>
-        </form>
       </div>
     </motion.section>
   );
 };
-
-
-
-

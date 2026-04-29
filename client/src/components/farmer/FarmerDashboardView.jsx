@@ -14,7 +14,6 @@ const demoProfiles = {
   wheat: { nitrogen: 82, phosphorus: 64, potassium: 68, ph: 7.1, location: "Punjab" },
   cotton: { nitrogen: 58, phosphorus: 42, potassium: 62, ph: 7.3, location: "Gujarat" }
 };
-
 const copy = {
   en: {
     revenue: "Total Revenue",
@@ -442,11 +441,3 @@ export const FarmerDashboardView = () => {
     </div>
   );
 };
-
-
-
-
-
-
-
-
