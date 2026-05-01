@@ -79,7 +79,7 @@ const buildQuantityErrorMessage = (product, quantity, text) => {
   return text.invalidQuantity;
 };
 
-export const BuyerDashboardView = () => {
+export const  BuyerDashboardView = () => {
   const coords = useGeoLocation();
   const weather = useWeather(coords);
   const mandi = useMandi();
