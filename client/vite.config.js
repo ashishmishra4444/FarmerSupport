@@ -4,6 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Explicitly tell Vite where to output the build files
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+  },
+  // Your existing dev server config
   server: {
     port: 5173,
     proxy: {
