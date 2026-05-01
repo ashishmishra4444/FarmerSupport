@@ -89,11 +89,4 @@ export const chatApi = {
   sendMessage: (chatId, payload) => api.post(`/chats/${chatId}/messages`, payload).then(unwrap)
 };
 
-// ADDED THIS BLOCK
-export const announcementApi = {
-  list: () => api.get("/announcements").then(unwrap),
-  create: (payload) => api.post("/announcements", payload).then(unwrap),
-  remove: (id) => api.delete(`/announcements/${id}`).then(unwrap)
-};
-
 export default api;

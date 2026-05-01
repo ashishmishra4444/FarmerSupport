@@ -8,7 +8,6 @@ import paymentRoutes from "./paymentRoutes.js";
 import productRoutes from "./productRoutes.js";
 import recommendationRoutes from "./recommendationRoutes.js";
 import weatherRoutes from "./weatherRoutes.js";
-import announcementRoutes from "./announcementRoutes.js";
 
 const router = Router();
 
@@ -28,6 +27,5 @@ router.use("/weather", weatherRoutes);
 router.use("/recommendations", recommendationRoutes);
 router.use("/payments", paymentRoutes);
 router.use("/chats", chatRoutes);
-router.use("/announcements", announcementRoutes); // ADDED THIS LINE
 
 export default router;
